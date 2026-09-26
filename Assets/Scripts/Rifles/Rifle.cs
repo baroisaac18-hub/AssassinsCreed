@@ -46,24 +46,24 @@ public class Rifle : MonoBehaviour
             return;
         }
 
-        if(Input.GetMouseButtonDown(0) && isMoving == false)
+        if(MobileInputManager.GetMouseButtonDown(0) && isMoving == false)
         {
             animator.SetBool("RifleActive", true);
             animator.SetBool("Shooting", true); 
             Shoot();
         }
-        else if(!Input.GetMouseButtonDown(0))
+        else if(!MobileInputManager.GetMouseButtonDown(0))
         {
             animator.SetBool("Shooting", false);
         }
         
-        if(Input.GetMouseButtonDown(1))
+        if(MobileInputManager.GetMouseButtonDown(1))
         {
             animator.SetBool("RifleAim", true);
              //crosshair.SetActive(true);
         }
 
-        else if(!Input.GetMouseButtonDown(1))
+        else if(!MobileInputManager.GetMouseButtonDown(1))
         {
             animator.SetBool("RifleAim", false);
             // crosshair.SetActive(false);
