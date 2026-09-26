@@ -52,12 +52,12 @@ public class PlayerScript : MonoBehaviour
         {
             movementSpeed = 2f;
 
-            if(!Input.GetButton("Horizontal") || !Input.GetButton("Vertical"))
+            if(!MobileInputManager.GetButton("Horizontal") || !MobileInputManager.GetButton("Vertical"))
             {
                 animator.SetFloat("movementValue", 0f);
             }
 
-            if(Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+            if(MobileInputManager.GetButton("Horizontal") || MobileInputManager.GetButton("Vertical"))
             {
                 animator.SetFloat("movementValue", 0.5f);
                 StartCoroutine(setEnergy());
@@ -112,8 +112,8 @@ public class PlayerScript : MonoBehaviour
 
     void PlayerMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal = MobileInputManager.GetAxis("Horizontal");
+        float vertical = MobileInputManager.GetAxis("Vertical");
 
         float movementAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
 
