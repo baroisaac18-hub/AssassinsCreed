@@ -43,68 +43,95 @@ public class Inventory : MonoBehaviour
      public GameObject CurrentWeapon3;
      public GameObject CurrentWeapon4;
 
+     // ===== 从存档恢复库存状态（由 AutoSaveManager 调用）=====
+     public void ApplyLoadedState(bool[] picked, bool[] active, bool fistMode)
+     {
+        isWeapon1Picked = picked[0];
+        isWeapon2Picked = picked[1];
+        isWeapon3Picked = picked[2];
+        isWeapon4Picked = picked[3];
+
+        isWeapon1Active = active[0];
+        isWeapon2Active = active[1];
+        isWeapon3Active = active[2];
+        isWeapon4Active = active[3];
+
+        fistFightMode = fistMode;
+
+        isRifleActive();
+
+        // 同步当前武器 GameObject 显隐
+        if(CurrentWeapon1 != null) CurrentWeapon1.SetActive(isWeapon1Active);
+        if(CurrentWeapon2 != null) CurrentWeapon2.SetActive(isWeapon2Active);
+        if(CurrentWeapon3 != null) CurrentWeapon3.SetActive(isWeapon3Active);
+        if(CurrentWeapon4 != null) CurrentWeapon4.SetActive(isWeapon4Active);
+
+        bool anyActive = isWeapon1Active || isWeapon2Active || isWeapon3Active || isWeapon4Active;
+        if(NoWeapon != null) NoWeapon.SetActive(!anyActive && !fistFightMode);
+     }
+
      private void Update()
      {
         if(isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && fistFightMode == false)
         {
             NoWeapon.SetActive(true);
         }
-        if(Input.GetMouseButtonDown(0) && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && fistFightMode == false)
+        if(MobileInputManager.GetMouseButtonDown(0) && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && fistFightMode == false)
         {
             fistFightMode = true;
             isRifleActive();
         }
 
-        if(Input.GetKeyDown("1") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon1Picked == true)
+        if(MobileInputManager.GetKeyDown("1") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon1Picked == true)
         {
             isWeapon1Active = true;
             isRifleActive();
             CurrentWeapon1.SetActive(true);
             NoWeapon.SetActive(false);
         }
-        else if(Input.GetKeyDown("1") && isWeapon1Active == true)
+        else if(MobileInputManager.GetKeyDown("1") && isWeapon1Active == true)
         {
             isWeapon1Active = false;
             isRifleActive();
             CurrentWeapon1.SetActive(false);
         }
 
-        if(Input.GetKeyDown("2") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon2Picked == true)
+        if(MobileInputManager.GetKeyDown("2") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon2Picked == true)
         {
             isWeapon2Active = true;
             isRifleActive();
             CurrentWeapon2.SetActive(true);
             NoWeapon.SetActive(false);
         }
-        else if(Input.GetKeyDown("2") && isWeapon2Active == true)
+        else if(MobileInputManager.GetKeyDown("2") && isWeapon2Active == true)
         {
             isWeapon2Active = false;
             isRifleActive();
             CurrentWeapon2.SetActive(false);
         }
 
-        if(Input.GetKeyDown("3") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon3Picked == true)
+        if(MobileInputManager.GetKeyDown("3") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon3Picked == true)
         {
             isWeapon3Active = true;
             isRifleActive();
             CurrentWeapon3.SetActive(true);
             NoWeapon.SetActive(false);
         }
-        else if(Input.GetKeyDown("3") && isWeapon3Active == true)
+        else if(MobileInputManager.GetKeyDown("3") && isWeapon3Active == true)
         {
             isWeapon3Active = false;
             isRifleActive();
             CurrentWeapon3.SetActive(false);
         }
 
-         if(Input.GetKeyDown("4") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon4Picked == true)
+         if(MobileInputManager.GetKeyDown("4") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && isWeapon4Picked == true)
         {
             isWeapon4Active = true;
             isRifleActive();
             CurrentWeapon4.SetActive(true);
             NoWeapon.SetActive(false);
         }
-        else if(Input.GetKeyDown("4") && isWeapon4Active == true)
+        else if(MobileInputManager.GetKeyDown("4") && isWeapon4Active == true)
         {
             isWeapon4Active = false;
             isRifleActive();
@@ -119,12 +146,12 @@ public class Inventory : MonoBehaviour
             isRifleActive();
         }
 
-        if(Input.GetKeyDown("5") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && GM.numberofHealth > 0 && playerScript.presentHealth < 95)
+        if(MobileInputManager.GetKeyDown("5") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && GM.numberofHealth > 0 && playerScript.presentHealth < 95)
         {
             StartCoroutine(IncreaseHealth());
         }
 
-        if(Input.GetKeyDown("6") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && GM.numberofEnergy > 0 && playerScript.presentEnergy < 95)
+        if(MobileInputManager.GetKeyDown("6") && isWeapon1Active == false && isWeapon2Active == false && isWeapon3Active == false && isWeapon4Active == false && GM.numberofEnergy > 0 && playerScript.presentEnergy < 95)
         {
             StartCoroutine(IncreaseEnergy());
         }
