@@ -25,7 +25,7 @@ public class PickupItem : MonoBehaviour
     {
         if(Vector3.Distance(transform.position, player.transform.position) < itemRadius)
         {
-            if(Input.GetKeyDown("f"))
+            if(MobileInputManager.GetKeyDown("f"))
             {
                 if(ItemTag == "Sword")
                 {
