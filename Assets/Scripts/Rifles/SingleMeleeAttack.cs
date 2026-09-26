@@ -20,7 +20,7 @@ public class SingleMeleeAttack : MonoBehaviour
 
     void SingleMeleeModes()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(MobileInputManager.GetMouseButtonDown(0))
         {
             SingleMeleeVal = Random.Range(1, 7);  //Max range is set to 7 because and incase same attack is called back to back.
 
