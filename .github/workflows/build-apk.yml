@@ -1,0 +1,53 @@
+name: Build Android APK
+
+# بناء APK تلقائياً على GitHub Actions (مجاناً) بدون حاسوب
+# الشغل: ينفّذ Unity 2021.3.22f1 في السحابة ويخرج ملف APK جاهز للتنزيل
+#
+# يحتاج 3 أسرار (Settings → Secrets and variables → Actions):
+#   UNITY_EMAIL     : بريد حساب Unity (مجاني)
+#   UNITY_PASSWORD  : كلمة مرور حساب Unity
+#   UNITY_SERIAL    : رقم الترخيص المجاني من https://license.unity3d.com
+#
+# لتشغيله: اضغط Actions → Build Android APK → Run workflow
+# أو تلقائياً عند كل push على main/master
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Unity 2021.3 Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (with LFS)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      - name: Build APK (IL2CPP / ARM64)
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: Android
+          unityVersion: 2021.3.22f1
+          allowDirtyBuild: true
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssassinsCreed-Android-APK
+          path: build/**/*.apk
