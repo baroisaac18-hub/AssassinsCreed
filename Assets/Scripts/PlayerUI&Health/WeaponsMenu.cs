@@ -28,7 +28,7 @@ public class WeaponsMenu : MonoBehaviour
 
    private void Update()
    {
-        if(Input.GetKeyDown(KeyCode.Tab) && weaponsMenuActive == false)
+        if(MobileInputManager.GetKeyDown(KeyCode.Tab) && weaponsMenuActive == false)
         {
             //open Items menu
             playerUI.SetActive(false);
@@ -43,7 +43,7 @@ public class WeaponsMenu : MonoBehaviour
             mainCamera.GetComponent<MainCameraController>().enabled = false;
         }
 
-        else if(Input.GetKeyDown(KeyCode.Tab) && weaponsMenuActive == true)
+        else if(MobileInputManager.GetKeyDown(KeyCode.Tab) && weaponsMenuActive == true)
         {
             //close Items menu
             playerUI.SetActive(true);
