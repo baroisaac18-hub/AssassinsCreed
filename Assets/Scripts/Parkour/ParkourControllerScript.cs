@@ -19,7 +19,7 @@ public class ParkourControllerScript : MonoBehaviour
     private void Update()
     {
         var hitData = environmentChecker.CheckObstacle();
-        if(Input.GetButton("Jump") && !playerInAction)
+        if(MobileInputManager.GetButton("Jump") && !playerInAction)
         {
             if(hitData.hitFound)
             {
@@ -37,7 +37,7 @@ public class ParkourControllerScript : MonoBehaviour
         if(playerScript.playerOnLedge && !playerInAction && !hitData.hitFound)
         {
             bool canJump = true;
-            if(playerScript.LedgeInfo.height > autoJumpHeightLimit && !Input.GetButton("Jump"))
+            if(playerScript.LedgeInfo.height > autoJumpHeightLimit && !MobileInputManager.GetButton("Jump"))
                 canJump = false;
 
             if(canJump && playerScript.LedgeInfo.angle <= 90)
