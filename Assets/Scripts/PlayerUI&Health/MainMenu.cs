@@ -18,6 +18,9 @@ public class MainMenu : MonoBehaviour
     public void OnStartButton()
     {
        Debug.Log("Starting");
+       // بدء لعبة جديدة — احذف أي حفظ قديم
+       SaveSystem.DeleteSave();
+       SaveSystem.continueRequested = false;
        startGame = true;
        SceneManager.LoadScene("MainScene"); 
     }
