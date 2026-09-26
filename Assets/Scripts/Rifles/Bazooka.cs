@@ -46,24 +46,24 @@ public class Bazooka : MonoBehaviour
             return;
         }
 
-        if(Input.GetMouseButtonDown(0) && isMoving == false)
+        if(MobileInputManager.GetMouseButtonDown(0) && isMoving == false)
         {
             animator.SetBool("BazookaActive", true);
             animator.SetBool("BazookaShooting", true); 
             Shoot();
         }
-        else if(!Input.GetMouseButtonDown(0))
+        else if(!MobileInputManager.GetMouseButtonDown(0))
         {
             animator.SetBool("BazookaShooting", false);
         }
 
-        if(Input.GetMouseButtonDown(1))
+        if(MobileInputManager.GetMouseButtonDown(1))
         {
             animator.SetBool("BazookaAim", true);
             //crosshair.SetActive(false);
         }
 
-        else if(!Input.GetMouseButtonDown(1))
+        else if(!MobileInputManager.GetMouseButtonDown(1))
         {
             animator.SetBool("BazookaAim", false);
             //crosshair.SetActive(false);
