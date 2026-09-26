@@ -31,9 +31,9 @@ public class MainCameraController : MonoBehaviour
         invertXValue = (invertX) ? -1 : 1;
         invertYValue = (invertY) ? -1 : 1;
 
-        rotX += Input.GetAxis("Mouse Y") * invertYValue * rotSpeed;
+        rotX += MobileInputManager.GetAxis("Mouse Y") * invertYValue * rotSpeed;
         rotX = Mathf.Clamp(rotX, minVerAngle, maxVerAngle);
-        rotY += Input.GetAxis("Mouse X") * invertXValue * rotSpeed;
+        rotY += MobileInputManager.GetAxis("Mouse X") * invertXValue * rotSpeed;
 
         var targetRotation = Quaternion.Euler(rotX, rotY, 0);
 
