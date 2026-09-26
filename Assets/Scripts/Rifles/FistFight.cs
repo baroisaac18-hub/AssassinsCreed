@@ -22,7 +22,7 @@ public class FistFight : MonoBehaviour
 
     private void Update()
     {
-        if(!Input.GetMouseButtonDown(0))
+        if(!MobileInputManager.GetMouseButtonDown(0))
         {
             Timer += Time.deltaTime;
         }
@@ -47,7 +47,7 @@ public class FistFight : MonoBehaviour
 
     void FistFightModes()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(MobileInputManager.GetMouseButtonDown(0))
         {
             FistFightVal = Random.Range(1, 7);  //Max range is set to 7 because and incase same attack is called back to back.
 
