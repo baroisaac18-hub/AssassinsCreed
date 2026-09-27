@@ -170,7 +170,7 @@ public class MobileTouchControls : MonoBehaviour
         trt.sizeDelta = new Vector2(700f, 120f);
         var title = titleGo.GetComponent<Text>();
         title.text = "PAUSED";
-        title.font = SafeFont();
+        title.font = TouchButton.SafeFont();
         title.fontSize = 64;
         title.alignment = TextAnchor.MiddleCenter;
         title.color = Color.white;
@@ -363,7 +363,7 @@ public class TouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public static bool HapticsEnabled = true;
 
     // خط احتياطي: بعض أجهزة Android لا تجد LegacyRuntime.ttf فتظهر الأزرار بدون نصوص
-    static Font SafeFont()
+    public static Font SafeFont()
     {
         var f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
