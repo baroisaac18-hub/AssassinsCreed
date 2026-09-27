@@ -74,19 +74,19 @@ public class MobileTouchControls : MonoBehaviour
         _look.sensitivity = cameraSensitivityScale;
 
         // 3) زر الإطلاق/الهجوم — أسفل اليمين (كبير)
-        TouchButton.Create(_canvas.transform, "Attack", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 170f), 140f,
+        TouchButton.Create(_canvas.transform, "X", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 170f), 140f,
             onDown: () => { MobileInputManager.Fire1Held = true; MobileInputManager.PressFire1(); },
-            onUp: () => MobileInputManager.Fire1Held = false);
+            onUp: () => MobileInputManager.Fire1Held = false, bgColor: new Color(0.13f, 0.55f, 0.95f, 0.85f));
 
         // 4) زر القفز — فوق زر الهجوم جهة اليسار
-        TouchButton.Create(_canvas.transform, "Jump", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-300f, 300f), 100f,
+        TouchButton.Create(_canvas.transform, "A", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-300f, 300f), 100f,
             onDown: () => { MobileInputManager.JumpHeld = true; MobileInputManager.PressJump(); },
-            onUp: () => MobileInputManager.JumpHeld = false);
+            onUp: () => MobileInputManager.JumpHeld = false, bgColor: new Color(0.36f, 0.81f, 0.25f, 0.85f));
 
         // 5) زر التصويب — بجانب القفز
-        TouchButton.Create(_canvas.transform, "Aim", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 350f), 100f,
+        TouchButton.Create(_canvas.transform, "Y", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 350f), 100f,
             onDown: () => { MobileInputManager.Fire2Held = true; MobileInputManager.PressFire2(); },
-            onUp: () => MobileInputManager.Fire2Held = false);
+            onUp: () => MobileInputManager.Fire2Held = false, bgColor: new Color(0.95f, 0.77f, 0.06f, 0.85f));
 
         // 6) زر القائمة (Tab) — أعلى اليسار
         TouchButton.Create(_canvas.transform, "Menu", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(130f, -120f), 90f,
@@ -170,7 +170,7 @@ public class MobileTouchControls : MonoBehaviour
         trt.sizeDelta = new Vector2(700f, 120f);
         var title = titleGo.GetComponent<Text>();
         title.text = "PAUSED";
-        title.font = TouchButton.SafeFont();
+        title.font = SafeFont();
         title.fontSize = 64;
         title.alignment = TextAnchor.MiddleCenter;
         title.color = Color.white;
@@ -363,7 +363,7 @@ public class TouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public static bool HapticsEnabled = true;
 
     // خط احتياطي: بعض أجهزة Android لا تجد LegacyRuntime.ttf فتظهر الأزرار بدون نصوص
-    public static Font SafeFont()
+    static Font SafeFont()
     {
         var f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
@@ -374,7 +374,7 @@ public class TouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     System.Action _onUp;
 
     public static TouchButton Create(Transform parent, string label, Vector2 anchor, Vector2 pivot, Vector2 anchoredPos, float diameter,
-        System.Action onDown = null, System.Action onUp = null)
+        System.Action onDown = null, System.Action onUp = null, Color bgColor = default(Color))
     {
         var go = new GameObject("Btn_" + label, typeof(RectTransform), typeof(Image));
         go.transform.SetParent(parent, false);
@@ -384,7 +384,7 @@ public class TouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         rt.anchoredPosition = anchoredPos;
         rt.sizeDelta = new Vector2(diameter, diameter);
         var img = go.GetComponent<Image>();
-        img.color = new Color(1f, 1f, 1f, 0.30f);
+        img.color = bgColor == default(Color) ? new Color(1f, 1f, 1f, 0.30f) : bgColor;
         img.raycastTarget = true;
 
         var text = new GameObject("Text", typeof(RectTransform), typeof(Text));
