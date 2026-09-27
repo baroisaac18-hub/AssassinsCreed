@@ -50,6 +50,9 @@ public class MobileTouchControls : MonoBehaviour
         _active = Application.isMobilePlatform || forceMobileInEditor;
         if (!_active) return;
 
+        // احتفظ بواجهة اللمس عند تغيير المشهد (من القائمة إلى اللعب)
+        DontDestroyOnLoad(gameObject);
+
         Application.targetFrameRate = targetFrameRate;
         TouchButton.HapticsEnabled = enableHaptics;
 
@@ -71,33 +74,33 @@ public class MobileTouchControls : MonoBehaviour
         _look.sensitivity = cameraSensitivityScale;
 
         // 3) زر الإطلاق/الهجوم — أسفل اليمين (كبير)
-        TouchButton.Create(_canvas.transform, "هجوم", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 170f), 140f,
+        TouchButton.Create(_canvas.transform, "Attack", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 170f), 140f,
             onDown: () => { MobileInputManager.Fire1Held = true; MobileInputManager.PressFire1(); },
             onUp: () => MobileInputManager.Fire1Held = false);
 
         // 4) زر القفز — فوق زر الهجوم جهة اليسار
-        TouchButton.Create(_canvas.transform, "قفز", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-300f, 300f), 100f,
+        TouchButton.Create(_canvas.transform, "Jump", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-300f, 300f), 100f,
             onDown: () => { MobileInputManager.JumpHeld = true; MobileInputManager.PressJump(); },
             onUp: () => MobileInputManager.JumpHeld = false);
 
         // 5) زر التصويب — بجانب القفز
-        TouchButton.Create(_canvas.transform, "تصويب", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 350f), 100f,
+        TouchButton.Create(_canvas.transform, "Aim", new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, 350f), 100f,
             onDown: () => { MobileInputManager.Fire2Held = true; MobileInputManager.PressFire2(); },
             onUp: () => MobileInputManager.Fire2Held = false);
 
         // 6) زر القائمة (Tab) — أعلى اليسار
-        TouchButton.Create(_canvas.transform, "قائمة", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(130f, -120f), 90f,
+        TouchButton.Create(_canvas.transform, "Menu", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(130f, -120f), 90f,
             onDown: () => MobileInputManager.PressMenu());
 
         // 6b) زر الإيقاف المؤقت — أعلى اليسار (بجانب القائمة)
         if (enablePauseMenu)
         {
-            TouchButton.Create(_canvas.transform, "إيقاف", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(250f, -120f), 90f,
+            TouchButton.Create(_canvas.transform, "Pause", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(250f, -120f), 90f,
                 onDown: () => TogglePause());
         }
 
         // 7) زر الالتقاط (F) — أعلى اليمين
-        TouchButton.Create(_canvas.transform, "التقاط", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-130f, -110f), 95f,
+        TouchButton.Create(_canvas.transform, "Pickup", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-130f, -110f), 95f,
             onDown: () => MobileInputManager.PressPickup());
 
         // 8) أزرار الأسلحة 1-4 — الحافة اليمنى
@@ -105,14 +108,14 @@ public class MobileTouchControls : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             int slot = i + 1;
-            TouchButton.Create(_canvas.transform, "سلاح" + slot, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-70f, wY[i]), 78f,
+            TouchButton.Create(_canvas.transform, "W" + slot, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-70f, wY[i]), 78f,
                 onDown: () => MobileInputManager.PressWeapon(slot));
         }
 
         // 9) جرعة الصحة (5) والطاقة (6) — يمين أعلى
-        TouchButton.Create(_canvas.transform, "صحة", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-130f, -230f), 78f,
+        TouchButton.Create(_canvas.transform, "HP", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-130f, -230f), 78f,
             onDown: () => MobileInputManager.PressHealth());
-        TouchButton.Create(_canvas.transform, "طاقة", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-230f, -230f), 78f,
+        TouchButton.Create(_canvas.transform, "EP", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-230f, -230f), 78f,
             onDown: () => MobileInputManager.PressEnergy());
     }
 
@@ -123,6 +126,18 @@ public class MobileTouchControls : MonoBehaviour
         MobileInputManager.MoveAxis = Vector2.zero;
         MobileInputManager.LookDelta = Vector2.zero;
         MobileInputManager.JumpHeld = MobileInputManager.Fire1Held = MobileInputManager.Fire2Held = false;
+    }
+
+    void Update()
+    {
+        // تأمين: إذا ضاع EventSystem بعد تغيير المشهد، أعد إنشاء واحد دائم
+        if (_active && EventSystem.current == null)
+        {
+            var go = new GameObject("EventSystem");
+            go.AddComponent<EventSystem>();
+            go.AddComponent<StandaloneInputModule>();
+            DontDestroyOnLoad(go);
+        }
     }
 
     void TogglePause()
@@ -154,18 +169,18 @@ public class MobileTouchControls : MonoBehaviour
         trt.anchorMax = new Vector2(0.5f, 0.72f);
         trt.sizeDelta = new Vector2(700f, 120f);
         var title = titleGo.GetComponent<Text>();
-        title.text = "إيقاف مؤقت";
-        title.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        title.text = "PAUSED";
+        title.font = SafeFont();
         title.fontSize = 64;
         title.alignment = TextAnchor.MiddleCenter;
         title.color = Color.white;
 
         // متابعة
-        TouchButton.Create(go.transform, "متابعة", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), 150f,
+        TouchButton.Create(go.transform, "Continue", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), 150f,
             onDown: () => TogglePause());
 
         // خروج من اللعبة
-        TouchButton.Create(go.transform, "خروج", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -150f), 130f,
+        TouchButton.Create(go.transform, "Exit", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -150f), 130f,
             onDown: () => QuitGame());
     }
 
@@ -194,26 +209,25 @@ public class MobileTouchControls : MonoBehaviour
             var go = new GameObject("EventSystem");
             go.AddComponent<EventSystem>();
             go.AddComponent<StandaloneInputModule>();
+            // يبقى EventSystem موجوداً عند تغيير المشهد وإلا تتوقف الأزرار عن الاستجابة
+            DontDestroyOnLoad(go);
         }
     }
 
     void CreateCanvas()
     {
         var go = new GameObject("MobileTouchCanvas");
+        // يبقى الكانفس وكل الأزرار بداخله عند تغيير المشهد
+        DontDestroyOnLoad(go);
         _canvas = go.AddComponent<Canvas>();
         _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         var scaler = go.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080f, 1920f);
+        // دقة مرجعية تتبع اتجاه الشاشة (أفقي 1920x1080 / عمودي 1080x1920)
+        bool landscape = Screen.width > Screen.height;
+        scaler.referenceResolution = landscape ? new Vector2(1920f, 1080f) : new Vector2(1080f, 1920f);
         scaler.matchWidthOrHeight = 0.5f;
         go.AddComponent<GraphicRaycaster>();
-
-        // تكييف مع منطقة الأمان (نوتش / شاشات منحنية)
-        var safe = Screen.safeArea;
-        var rt = (RectTransform)go.transform;
-        rt.anchorMin = new Vector2(safe.xMin / Screen.width, safe.yMin / Screen.height);
-        rt.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
-        rt.offsetMin = rt.offsetMax = Vector2.zero;
     }
 
     // إنشاء تلقائي على الموبايل — بدون أي ربط يدوي في المشهد
@@ -348,6 +362,14 @@ public class TouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public static bool HapticsEnabled = true;
 
+    // خط احتياطي: بعض أجهزة Android لا تجد LegacyRuntime.ttf فتظهر الأزرار بدون نصوص
+    static Font SafeFont()
+    {
+        var f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        return f;
+    }
+
     System.Action _onDown;
     System.Action _onUp;
 
@@ -372,7 +394,7 @@ public class TouchButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         trt.sizeDelta = new Vector2(diameter, diameter);
         var t = text.GetComponent<Text>();
         t.text = label;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        t.font = SafeFont();
         t.fontSize = (int)(diameter * 0.32f);
         t.alignment = TextAnchor.MiddleCenter;
         t.color = Color.white;
