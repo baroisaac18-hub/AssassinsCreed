@@ -36,6 +36,7 @@ public class MobileTouchControls : MonoBehaviour
     public bool enablePauseMenu = true;
 
     bool _active;
+    Canvas _canvas;
     JoystickArea _joystick;
     LookArea _look;
     static MobileTouchControls _instance;
