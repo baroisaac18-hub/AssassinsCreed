@@ -63,40 +63,34 @@ public class MobileMainMenu : MonoBehaviour
 
         CanvasScaler scaler = canvasGO.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080, 1920);
+        // دقة مرجعية تتبع اتجاه الشاشة (أفقي 1920x1080 / عمودي 1080x1920)
+        bool landscape = Screen.width > Screen.height;
+        scaler.referenceResolution = landscape ? new Vector2(1920f, 1080f) : new Vector2(1080f, 1920f);
         scaler.matchWidthOrHeight = 0.5f;
 
         // 全屏背景
         Image bg = canvasGO.AddComponent<Image>();
         bg.color = new Color(0.07f, 0.07f, 0.10f, 0.97f);
 
-        // ---- EventSystem ----
-        if (FindObjectOfType<EventSystem>() == null)
-        {
-            GameObject es = new GameObject("EventSystem",
-                typeof(EventSystem), typeof(StandaloneInputModule));
-            es.transform.SetParent(canvasGO.transform, false);
-        }
-
         // ---- 标题 ----
-        CreateText(canvasGO.transform, "العقّاب", new Vector2(0, 320), 96,
+        CreateText(canvasGO.transform, "ASSASSIN'S CREED", new Vector2(0, 320), 72,
             TextAnchor.MiddleCenter, new Color(0.90f, 0.72f, 0.25f));
-        CreateText(canvasGO.transform, "Assassin's Creed", new Vector2(0, 200), 38,
+        CreateText(canvasGO.transform, "MOBILE EDITION", new Vector2(0, 200), 36,
             TextAnchor.MiddleCenter, new Color(0.85f, 0.85f, 0.85f));
 
         // ---- 按钮 ----
         bool hasSave = SaveSystem.HasSave();
 
-        CreateButton(canvasGO.transform, "متابعة", new Vector2(0, 20), hasSave,
+        CreateButton(canvasGO.transform, "Continue", new Vector2(0, 20), hasSave,
             () => { SaveSystem.continueRequested = true; SceneManager.LoadScene(gameSceneName); });
 
-        CreateButton(canvasGO.transform, "لعبة جديدة", new Vector2(0, -150), true,
+        CreateButton(canvasGO.transform, "New Game", new Vector2(0, -150), true,
             () => { SaveSystem.DeleteSave(); SaveSystem.continueRequested = false; SceneManager.LoadScene(gameSceneName); });
 
-        CreateButton(canvasGO.transform, "خروج", new Vector2(0, -320), true, QuitGame);
+        CreateButton(canvasGO.transform, "Exit", new Vector2(0, -320), true, QuitGame);
 
         // 版本/提示
-        CreateText(canvasGO.transform, "إصدار الموبايل — حفظ تلقائي مفعّل",
+        CreateText(canvasGO.transform, "Mobile Edition - Auto Save ON",
             new Vector2(0, -560), 28, TextAnchor.MiddleCenter, new Color(0.6f, 0.6f, 0.6f));
     }
 
@@ -112,6 +106,14 @@ public class MobileMainMenu : MonoBehaviour
     }
 
     // ================= 组件工厂 =================
+    // خط احتياطي: بعض أجهزة Android لا تجد LegacyRuntime.ttf فتظهر النصوص فارغة
+    static Font SafeFont()
+    {
+        var f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        return f;
+    }
+
     Text CreateText(Transform parent, string content, Vector2 pos, int size,
         TextAnchor align, Color color)
     {
@@ -124,7 +126,7 @@ public class MobileMainMenu : MonoBehaviour
 
         Text t = go.GetComponent<Text>();
         t.text = content;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        t.font = SafeFont();
         t.fontSize = size;
         t.alignment = align;
         t.color = color;
